@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>One Important Question ❤️</title>
+
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #ffe6ee;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1, h2 {
+    margin: 10px;
+    text-align: center;
+  }
+
+  .buttons {
+    position: relative;
+    width: 350px;
+    height: 200px;
+  }
+
+  button {
+    position: absolute;
+    padding: 12px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  #yes {
+    background: #ff4d6d;
+    color: white;
+    left: 40px;
+    top: 80px;
+    z-index: 2;
+  }
+
+  #no {
+    background: #999;
+    color: white;
+    left: 200px;
+    top: 80px;
+  }
+
+  /* Video popup */
+  .popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+
+  video {
+    width: 80%;
+    max-width: 600px;
+    border-radius: 12px;
+  }
+
+  /* Smoke effect */
+  .smoke {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, #fff 0%, #ccc 40%, transparent 70%);
+    animation: smoke 1.5s forwards;
+    z-index: 5;
+  }
+
+  @keyframes smoke {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>I have a recurring question I want to ask…</h1>
+<h2>Do you want to be my Valentine? 💘</h2>
+
+<div class="buttons">
+  <button id="yes">Yes 💕</button>
+  <button id="no">No 😢</button>
+</div>
+
+<!-- Video popup -->
+<div class="popup" id="popup">
+  <video id="popupVideo" controls autoplay></video>
+</div>
+
+<script>
+let attempts = 0;
+let noScale = 1;
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const popup = document.getElementById("popup");
+const popupVideo = document.getElementById("popupVideo");
+
+const videos = {
+  4: "video1.mp4",
+  7: "video2.mp4",
+  10: "video3.mp4"
+};
+
+noBtn.addEventListener("mouseover", () => {
+  attempts++;
+
+  // Move button
+  const x = Math.random() * 250;
+  const y = Math.random() * 130;
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+
+  // Shrink
+  noScale *= 0.85;
+  noBtn.style.transform = `scale(${noScale})`;
+
+  // Trigger videos
+  if (videos[attempts]) {
+    showVideo(videos[attempts]);
+  }
+
+  // Final chaos
+  if (attempts === 13) {
+    finalSequence();
+  }
+});
+
+function showVideo(src) {
+  popup.style.display = "flex";
+  popupVideo.src = src;
+  popupVideo.onended = () => {
+    popup.style.display = "none";
+    popupVideo.src = "";
+  };
+}
+
+function finalSequence() {
+  document.body.appendChild(document.createElement("div")).className = "smoke";
+
+  noBtn.remove();
+  yesBtn.style.transition = "all 3s ease";
+  yesBtn.style.position = "fixed";
+  yesBtn.style.left = "50%";
+  yesBtn.style.top = "50%";
+  yesBtn.style.transform = "translate(-50%, -50%) scale(20)";
+}
+
+yesBtn.addEventListener("click", () => {
+  window.location.href = "final.html";
+});
+</script>
+
+</body>
+</html>
