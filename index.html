@@ -14,22 +14,22 @@
   }
 
   h1 {
-    font-size: 40px;
+    font-size: 48px;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 50px;
   }
 
   h2 {
-    font-size: 34px;
+    font-size: 40px;
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
   }
 
   button {
-    padding: 20px 36px;
-    font-size: 26px;
+    padding: 26px 48px;
+    font-size: 30px;
     border: none;
-    border-radius: 14px;
+    border-radius: 18px;
     cursor: pointer;
     position: absolute;
     transition: transform 0.3s ease;
@@ -38,16 +38,16 @@
   #yes {
     background: #ff4d6d;
     color: white;
-    left: 35%;
-    top: 55%;
+    left: 34%;
+    top: 58%;
     z-index: 2;
   }
 
   #no {
-    background: #888;
+    background: #777;
     color: white;
-    left: 55%;
-    top: 55%;
+    left: 56%;
+    top: 58%;
     z-index: 3;
   }
 
@@ -55,7 +55,7 @@
   .popup {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.8);
     display: none;
     justify-content: center;
     align-items: center;
@@ -63,24 +63,10 @@
   }
 
   .popup video {
-    width: 85vw;
-    max-width: 900px;
-    max-height: 80vh;
-    border-radius: 16px;
-  }
-
-  /* Smoke */
-  .smoke {
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(circle, #fff 0%, #ccc 45%, transparent 75%);
-    animation: smoke 1.5s forwards;
-    z-index: 4;
-  }
-
-  @keyframes smoke {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    width: 88vw;
+    max-width: 950px;
+    max-height: 82vh;
+    border-radius: 20px;
   }
 </style>
 </head>
@@ -139,7 +125,7 @@ function overlapsProtected(x, y) {
 
 function moveNoButton() {
   let x, y;
-  const padding = 20;
+  const padding = 30;
 
   do {
     x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
@@ -155,43 +141,43 @@ noBtn.addEventListener("mouseover", () => {
 
   moveNoButton();
 
-  noScale *= 0.88;
+  noScale *= 0.9;
   noBtn.style.transform = `scale(${noScale})`;
 
   if (videos[attempts]) {
     showVideo(videos[attempts]);
-  }
-
-  if (attempts === 13) {
-    finalSequence();
   }
 });
 
 function showVideo(src) {
   popup.style.display = "flex";
   popupVideo.src = src;
+
   popupVideo.onended = () => {
     popup.style.display = "none";
     popupVideo.src = "";
+
+    // After 3rd video (attempt 10)
+    if (attempts === 10) {
+      noBtn.remove();
+
+      setTimeout(() => {
+        growYesButton();
+      }, 1000);
+    }
   };
 }
 
-function finalSequence() {
-  const smoke = document.createElement("div");
-  smoke.className = "smoke";
-  document.body.appendChild(smoke);
-
-  noBtn.remove();
-
-  yesBtn.style.transition = "all 2.8s ease";
+function growYesButton() {
+  yesBtn.style.transition = "all 2.5s ease";
   yesBtn.style.position = "fixed";
   yesBtn.style.left = "50%";
   yesBtn.style.top = "50%";
   yesBtn.style.transform = "translate(-50%, -50%)";
-  yesBtn.style.width = "100vw";
-  yesBtn.style.height = "100vh";
-  yesBtn.style.borderRadius = "0";
-  yesBtn.style.fontSize = "42px";
+  yesBtn.style.width = "80vw";
+  yesBtn.style.height = "80vh";
+  yesBtn.style.fontSize = "44px";
+  yesBtn.style.borderRadius = "20px";
   yesBtn.style.zIndex = "20";
 }
 
