@@ -24,8 +24,8 @@
 
   .buttons {
     position: relative;
-    width: 350px;
-    height: 200px;
+    width: 360px;
+    height: 220px;
   }
 
   button {
@@ -35,22 +35,23 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease;
   }
 
   #yes {
     background: #ff4d6d;
     color: white;
     left: 40px;
-    top: 80px;
-    z-index: 2;
+    top: 90px;
+    z-index: 1;
   }
 
   #no {
     background: #999;
     color: white;
-    left: 200px;
-    top: 80px;
+    left: 220px;
+    top: 90px;
+    z-index: 3;
   }
 
   /* Video popup */
@@ -96,7 +97,6 @@
   <button id="no">No 😢</button>
 </div>
 
-<!-- Video popup -->
 <div class="popup" id="popup">
   <video id="popupVideo" controls autoplay></video>
 </div>
@@ -104,6 +104,7 @@
 <script>
 let attempts = 0;
 let noScale = 1;
+
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const popup = document.getElementById("popup");
@@ -115,25 +116,45 @@ const videos = {
   10: "video3.mp4"
 };
 
+function moveNoButton() {
+  let x, y;
+  const yesRect = yesBtn.getBoundingClientRect();
+
+  do {
+    x = Math.random() * 260;
+    y = Math.random() * 150;
+
+    const noRect = {
+      left: x,
+      top: y,
+      right: x + noBtn.offsetWidth,
+      bottom: y + noBtn.offsetHeight
+    };
+
+    var overlap =
+      noRect.left < yesRect.right &&
+      noRect.right > yesRect.left &&
+      noRect.top < yesRect.bottom &&
+      noRect.bottom > yesRect.top;
+
+  } while (overlap);
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
 noBtn.addEventListener("mouseover", () => {
   attempts++;
 
-  // Move button
-  const x = Math.random() * 250;
-  const y = Math.random() * 130;
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+  moveNoButton();
 
-  // Shrink
   noScale *= 0.85;
   noBtn.style.transform = `scale(${noScale})`;
 
-  // Trigger videos
   if (videos[attempts]) {
     showVideo(videos[attempts]);
   }
 
-  // Final chaos
   if (attempts === 13) {
     finalSequence();
   }
@@ -149,9 +170,12 @@ function showVideo(src) {
 }
 
 function finalSequence() {
-  document.body.appendChild(document.createElement("div")).className = "smoke";
+  const smoke = document.createElement("div");
+  smoke.className = "smoke";
+  document.body.appendChild(smoke);
 
   noBtn.remove();
+
   yesBtn.style.transition = "all 3s ease";
   yesBtn.style.position = "fixed";
   yesBtn.style.left = "50%";
