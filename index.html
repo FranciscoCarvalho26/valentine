@@ -11,46 +11,43 @@
     background: #ffe6ee;
     font-family: Arial, sans-serif;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
   }
 
-  h1, h2 {
-    margin: 10px;
+  h1 {
+    font-size: 40px;
     text-align: center;
+    margin-top: 40px;
   }
 
-  .buttons {
-    position: relative;
-    width: 360px;
-    height: 220px;
+  h2 {
+    font-size: 34px;
+    text-align: center;
+    margin-bottom: 40px;
   }
 
   button {
-    position: absolute;
-    padding: 12px 25px;
-    font-size: 18px;
+    padding: 20px 36px;
+    font-size: 26px;
     border: none;
-    border-radius: 10px;
+    border-radius: 14px;
     cursor: pointer;
+    position: absolute;
     transition: transform 0.3s ease;
   }
 
   #yes {
     background: #ff4d6d;
     color: white;
-    left: 40px;
-    top: 90px;
-    z-index: 1;
+    left: 35%;
+    top: 55%;
+    z-index: 2;
   }
 
   #no {
-    background: #999;
+    background: #888;
     color: white;
-    left: 220px;
-    top: 90px;
+    left: 55%;
+    top: 55%;
     z-index: 3;
   }
 
@@ -58,26 +55,27 @@
   .popup {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.75);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 10;
   }
 
-  video {
-    width: 80%;
-    max-width: 600px;
-    border-radius: 12px;
+  .popup video {
+    width: 85vw;
+    max-width: 900px;
+    max-height: 80vh;
+    border-radius: 16px;
   }
 
-  /* Smoke effect */
+  /* Smoke */
   .smoke {
     position: fixed;
     inset: 0;
-    background: radial-gradient(circle, #fff 0%, #ccc 40%, transparent 70%);
+    background: radial-gradient(circle, #fff 0%, #ccc 45%, transparent 75%);
     animation: smoke 1.5s forwards;
-    z-index: 5;
+    z-index: 4;
   }
 
   @keyframes smoke {
@@ -89,13 +87,11 @@
 
 <body>
 
-<h1>I have a recurring question I want to ask…</h1>
-<h2>Do you want to be my Valentine? 💘</h2>
+<h1 id="title1">I have a recurring question I want to ask…</h1>
+<h2 id="title2">Do you want to be my Valentine? 💘</h2>
 
-<div class="buttons">
-  <button id="yes">Yes 💕</button>
-  <button id="no">No 😢</button>
-</div>
+<button id="yes">Yes 💕</button>
+<button id="no">No 😢</button>
 
 <div class="popup" id="popup">
   <video id="popupVideo" controls autoplay></video>
@@ -110,34 +106,45 @@ const yesBtn = document.getElementById("yes");
 const popup = document.getElementById("popup");
 const popupVideo = document.getElementById("popupVideo");
 
+const protectedElements = [
+  document.getElementById("title1"),
+  document.getElementById("title2"),
+  yesBtn
+];
+
 const videos = {
   4: "video1.mp4",
   7: "video2.mp4",
   10: "video3.mp4"
 };
 
+function overlapsProtected(x, y) {
+  const noRect = {
+    left: x,
+    top: y,
+    right: x + noBtn.offsetWidth,
+    bottom: y + noBtn.offsetHeight
+  };
+
+  return protectedElements.some(el => {
+    const r = el.getBoundingClientRect();
+    return (
+      noRect.left < r.right &&
+      noRect.right > r.left &&
+      noRect.top < r.bottom &&
+      noRect.bottom > r.top
+    );
+  });
+}
+
 function moveNoButton() {
   let x, y;
-  const yesRect = yesBtn.getBoundingClientRect();
+  const padding = 20;
 
   do {
-    x = Math.random() * 260;
-    y = Math.random() * 150;
-
-    const noRect = {
-      left: x,
-      top: y,
-      right: x + noBtn.offsetWidth,
-      bottom: y + noBtn.offsetHeight
-    };
-
-    var overlap =
-      noRect.left < yesRect.right &&
-      noRect.right > yesRect.left &&
-      noRect.top < yesRect.bottom &&
-      noRect.bottom > yesRect.top;
-
-  } while (overlap);
+    x = Math.random() * (window.innerWidth - noBtn.offsetWidth - padding);
+    y = Math.random() * (window.innerHeight - noBtn.offsetHeight - padding);
+  } while (overlapsProtected(x, y));
 
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
@@ -148,7 +155,7 @@ noBtn.addEventListener("mouseover", () => {
 
   moveNoButton();
 
-  noScale *= 0.85;
+  noScale *= 0.88;
   noBtn.style.transform = `scale(${noScale})`;
 
   if (videos[attempts]) {
@@ -176,11 +183,16 @@ function finalSequence() {
 
   noBtn.remove();
 
-  yesBtn.style.transition = "all 3s ease";
+  yesBtn.style.transition = "all 2.8s ease";
   yesBtn.style.position = "fixed";
   yesBtn.style.left = "50%";
   yesBtn.style.top = "50%";
-  yesBtn.style.transform = "translate(-50%, -50%) scale(20)";
+  yesBtn.style.transform = "translate(-50%, -50%)";
+  yesBtn.style.width = "100vw";
+  yesBtn.style.height = "100vh";
+  yesBtn.style.borderRadius = "0";
+  yesBtn.style.fontSize = "42px";
+  yesBtn.style.zIndex = "20";
 }
 
 yesBtn.addEventListener("click", () => {
