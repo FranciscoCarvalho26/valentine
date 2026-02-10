@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>One Important Question ❤️</title>
+<title>I Love You ❤️</title>
 
 <style>
   body {
@@ -22,33 +22,64 @@
   h2 {
     font-size: 40px;
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 30px;
   }
 
-  button {
+  /* YES wrapper: moves only */
+  #yesWrapper {
+    position: absolute;
+    left: 34%;
+    top: 58%;
+    z-index: 2;
+    transition: left 1.8s ease, top 1.8s ease;
+  }
+
+  /* YES button: scales only */
+  #yes {
     padding: 26px 48px;
     font-size: 30px;
+    background: #ff4d6d;
+    color: white;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+    transform: scale(1);
+  }
+
+  #no {
+    padding: 26px 48px;
+    font-size: 30px;
+    background: #777;
+    color: white;
     border: none;
     border-radius: 18px;
     cursor: pointer;
     position: absolute;
-    transition: transform 0.3s ease;
-  }
-
-  #yes {
-    background: #ff4d6d;
-    color: white;
-    left: 34%;
-    top: 58%;
-    z-index: 2;
-  }
-
-  #no {
-    background: #777;
-    color: white;
     left: 56%;
     top: 58%;
     z-index: 3;
+    transition: transform 0.3s ease;
+  }
+
+  /* Smooth expand animation (same engine as pulse) */
+  @keyframes expandSmooth {
+    from { transform: scale(0.2); }
+    to   { transform: scale(1); }
+  }
+
+  .expand {
+    animation: expandSmooth 2.8s ease forwards;
+  }
+
+  /* Pulse animation */
+  @keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+
+  .pulse {
+    animation: pulse 3s infinite;
   }
 
   /* Video popup */
@@ -75,12 +106,16 @@
 
 <h1 id="title1">I have a recurring question I want to ask…</h1>
 <h2 id="title2">Do you want to be my Valentine? 💘</h2>
+<h2 id="title3">I dare you to click "No"... don’t even think about it... 🫣</h2>
 
-<button id="yes">Yes 💕</button>
+<div id="yesWrapper">
+  <button id="yes">Yes 💕</button>
+</div>
+
 <button id="no">No 😢</button>
 
 <div class="popup" id="popup">
-  <video id="popupVideo" controls autoplay></video>
+  <video id="popupVideo" muted playsinline controls></video>
 </div>
 
 <script>
@@ -89,13 +124,14 @@ let noScale = 1;
 
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
+const yesWrapper = document.getElementById("yesWrapper");
 const popup = document.getElementById("popup");
 const popupVideo = document.getElementById("popupVideo");
 
 const protectedElements = [
   document.getElementById("title1"),
   document.getElementById("title2"),
-  yesBtn
+  yesWrapper
 ];
 
 const videos = {
@@ -152,33 +188,41 @@ noBtn.addEventListener("mouseover", () => {
 function showVideo(src) {
   popup.style.display = "flex";
   popupVideo.src = src;
+  popupVideo.currentTime = 0;
+  popupVideo.play();
 
   popupVideo.onended = () => {
     popup.style.display = "none";
     popupVideo.src = "";
 
-    // After 3rd video (attempt 10)
     if (attempts === 10) {
       noBtn.remove();
-
-      setTimeout(() => {
-        growYesButton();
-      }, 1000);
+      setTimeout(moveYesToCenter, 1000);
     }
   };
 }
 
-function growYesButton() {
-  yesBtn.style.transition = "all 2.5s ease";
-  yesBtn.style.position = "fixed";
-  yesBtn.style.left = "50%";
-  yesBtn.style.top = "50%";
-  yesBtn.style.transform = "translate(-50%, -50%)";
+function moveYesToCenter() {
+  yesWrapper.style.position = "fixed";
+  yesWrapper.style.left = "50%";
+  yesWrapper.style.top = "50%";
+  yesWrapper.style.transform = "translate(-50%, -50%)";
+
+  setTimeout(expandYesButton, 1000);
+}
+
+function expandYesButton() {
   yesBtn.style.width = "80vw";
   yesBtn.style.height = "80vh";
-  yesBtn.style.fontSize = "44px";
-  yesBtn.style.borderRadius = "20px";
-  yesBtn.style.zIndex = "20";
+  yesBtn.style.fontSize = "300px";
+  yesBtn.style.borderRadius = "22px";
+
+  yesBtn.classList.add("expand");
+
+  setTimeout(() => {
+    yesBtn.classList.remove("expand");
+    yesBtn.classList.add("pulse");
+  }, 2800);
 }
 
 yesBtn.addEventListener("click", () => {
